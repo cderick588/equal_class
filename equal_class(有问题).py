@@ -53,37 +53,6 @@ class UnionFind(Equivalent):
             self.parent[root_x] = root_y
             self.rank[root_y] += self.rank[root_x]
 
-class equivalent_item():
-    '''
-    这个类存在的意义就是为了方便记录等价类和使用等价类。
-    通过重载__eq__和__hash__方法，使得相等的等价类的hash值相同，便于rete算法的运行
-    '''
-    def __init__(self, item, parent):
-        self.__item = item
-        self.__parent = parent
-    
-    @property
-    def item(self):
-        return self.__item
-    
-    @property
-    def parent(self):
-        return self.__parent
-    def __eq__(self, other):
-        if isinstance(other, equivalent_item):
-                return self.parent == other.parent
-        else:
-            return self.parent == other
-    def __hash__(self):
-        return hash(self.parent)
-    
-#下面这两句是为了在experta中可以正常使用equivalent_item作为事实的value，因为在Fact的初始化中，会将value转化为freeze(value)再写入
-@freeze.register(equivalent_item)
-def freeze_equivalent_item(obj):
-    return obj
-@unfreeze.register(equivalent_item)
-def unfreeze_equivalent_item(obj):
-    return obj
     
 class equal_fact(Fact):
     def __new__(cls, equivalent_env, *args, **kwargs):
@@ -105,7 +74,9 @@ class equal_fact(Fact):
         
         return super().__new__(cls, *eq_args, **eq_kwargs) #理论上这里进行再创建类的时候，使用的就已经是等价类了。
     
+
 #测试代码：
+
 
 if __name__ == "__main__":
     uf = UnionFind()
